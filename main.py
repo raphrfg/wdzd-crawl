@@ -2,7 +2,6 @@ import wikipedia
 import datetime
 import time
 import pickle
-import joblib
 category = "Computer Science"
 
 def isPageInRightCategory(page_str, cats):
