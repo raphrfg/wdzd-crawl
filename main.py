@@ -31,19 +31,21 @@ def load(item):
         return pickle.load(fp)
 
 all_pages=load('longlist')
-
 list_of_pages = []
 print("Size of initial set:" , len(all_pages))
 wikipedia.set_rate_limiting(True, min_wait=datetime.timedelta(0, 0, 50000))
+curr_proc=0;
 for p_item in all_pages:
+    curr_proc = curr_proc + 1
     try:
+        #results = joblib.Parallel(n_jobs=8)(joblib.delayed(getLinksFromPage)(i) for i in getLinksFromPage(p_item))
         for l_item in getLinksFromPage(p_item):
             try:
                 if isPageInRightCategory(l_item, all_pages):
                     list_of_pages.append((p_item,l_item))
             except:
                 pass
-        print("size of edgelist: ", len(list_of_pages))
+        print("size of edgelist: ", len(list_of_pages), "currently processed: ", curr_proc/len(all_pages)*100,"%")
         with open('edgelist_long', 'wb') as fp:
             pickle.dump(list_of_pages, fp)
     except:
