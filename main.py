@@ -1,6 +1,8 @@
 import wikipedia
+import datetime
 import time
 import pickle
+import joblib
 category = "Computer Science"
 
 def isPageInRightCategory(page_str, cats):
@@ -25,24 +27,25 @@ def crawl():
         time.sleep(2)
     with open('pagelist', 'wb') as fp:
         pickle.dump(all_pages, fp)
-def load():
-    with open('pagelist', 'rb') as fp:
+def load(item):
+    with open(item, 'rb') as fp:
         return pickle.load(fp)
 
-all_pages=load()
+all_pages=load('longlist')
+
 list_of_pages = []
 print("Size of initial set:" , len(all_pages))
+wikipedia.set_rate_limiting(True, min_wait=datetime.timedelta(0, 0, 50000))
 for p_item in all_pages:
     try:
         for l_item in getLinksFromPage(p_item):
             try:
                 if isPageInRightCategory(l_item, all_pages):
-                    #print((p_item,l_item))
                     list_of_pages.append((p_item,l_item))
             except:
                 pass
         print("size of edgelist: ", len(list_of_pages))
-        with open('edgelist', 'wb') as fp:
+        with open('edgelist_long', 'wb') as fp:
             pickle.dump(list_of_pages, fp)
     except:
         pass
